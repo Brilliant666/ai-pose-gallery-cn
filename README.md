@@ -35,13 +35,6 @@
 - 📊 **数据可复用**：中文记录、元数据、日⇄中对照表全部导出为 JSON / CSV
 - 🔎 **SEO 就绪**：robots.txt / sitemap.xml / 404.html / og-cover / JSON-LD 结构化数据
 
-## 📸 页面预览
-
-| 暗色 · 中文 | 浅色 · 日文 |
-|:---:|:---:|
-| ![暗色主题](docs/preview-1.jpg) | ![浅色主题](docs/preview-2.jpg) |
-
-社交分享封面：`og-cover.jpg`（1200×630）
 
 ## 📊 数据规模
 
@@ -93,7 +86,6 @@
 │   ├── pose-zh.json        # 中文数据（含中日对照字段）
 │   ├── meta.json           # 系列 / 分类 / 视角元数据
 │   └── translations.csv    # 日⇄中对照表（323 条）
-├── docs/                   # 预览截图
 ├── scripts/
 │   ├── extract.py          # 从原站存档解析内嵌数据
 │   ├── manifest.py         # 生成清单
@@ -267,11 +259,6 @@ open_file_cache max=10000 inactive=60s;
 - 🌐 **2 言語**：日本語 / 中文をその場で切り替え
 - 📦 **依存ゼロ**：単一 HTML、データ埋め込み、`file://` でそのまま開ける
 
-## 📸 画面プレビュー
-
-| ダーク · 中文 | ライト · 日本語 |
-|:---:|:---:|
-| ![ダーク](docs/preview-1.jpg) | ![ライト](docs/preview-2.jpg) |
 
 ## 📊 データ規模
 
@@ -326,11 +313,6 @@ Original author: ギア（[@giaaibusi](https://x.com/giaaibusi)）
 - 🌗 **Dual theme** and 🌐 **bilingual UI** with persisted preferences
 - 📦 **Zero dependencies**: one HTML file with embedded data — opens via `file://`, no server needed
 
-## 📸 Preview
-
-| Dark · Chinese | Light · Japanese |
-|:---:|:---:|
-| ![dark](docs/preview-1.jpg) | ![light](docs/preview-2.jpg) |
 
 ## 📊 Scale
 
