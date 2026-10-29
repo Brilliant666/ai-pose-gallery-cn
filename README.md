@@ -36,6 +36,14 @@
 - 🔎 **SEO 就绪**：robots.txt / sitemap.xml / 404.html / og-cover / JSON-LD 结构化数据
 
 
+## 📸 页面预览
+
+| 暗色 · 中文 | 浅色 · 日文 |
+|:---:|:---:|
+| ![暗色主题](docs/preview-1.jpg) | ![浅色主题](docs/preview-2.jpg) |
+
+> 截图中的素材已做模糊处理，仅演示界面结构。
+
 ## 📊 数据规模
 
 | 系列 | 图片数 | 姿势数 |
@@ -78,7 +86,8 @@
 ├── robots.txt
 ├── sitemap.xml
 ├── 404.html
-├── og-cover.jpg            # 1200×630 社交分享封面
+├── og-cover.jpg            # 1200×630 社交分享封面（自制纯排版）
+├── docs/                   # 界面预览截图（素材已模糊）
 ├── manifest.json           # 全量清单（含原始 URL 与本地路径）
 ├── manifest.csv            # 同上，Excel 可直接打开
 ├── data/
@@ -260,6 +269,14 @@ open_file_cache max=10000 inactive=60s;
 - 📦 **依存ゼロ**：単一 HTML、データ埋め込み、`file://` でそのまま開ける
 
 
+## 📸 画面プレビュー
+
+| ダーク · 中文 | ライト · 日本語 |
+|:---:|:---:|
+| ![ダーク](docs/preview-1.jpg) | ![ライト](docs/preview-2.jpg) |
+
+> スクリーンショット内の素材はぼかし処理済みです（UI 構造の説明用）。
+
 ## 📊 データ規模
 
 | 系列 | 画像数 | ポーズ数 |
@@ -313,6 +330,14 @@ Original author: ギア（[@giaaibusi](https://x.com/giaaibusi)）
 - 🌗 **Dual theme** and 🌐 **bilingual UI** with persisted preferences
 - 📦 **Zero dependencies**: one HTML file with embedded data — opens via `file://`, no server needed
 
+
+## 📸 Preview
+
+| Dark · Chinese | Light · Japanese |
+|:---:|:---:|
+| ![dark](docs/preview-1.jpg) | ![light](docs/preview-2.jpg) |
+
+> Artwork in the screenshots is blurred; they only illustrate the UI structure.
 
 ## 📊 Scale
 
