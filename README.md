@@ -83,6 +83,7 @@
 ```
 .
 ├── index.html              # 单页画廊（数据内嵌，file:// 可直开）
+├── DEPLOY.md               # 两个站点的联合部署手册（VPS / Cloudflare）
 ├── robots.txt
 ├── sitemap.xml
 ├── 404.html
