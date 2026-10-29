@@ -160,7 +160,10 @@ main{max-width:1600px;margin:0 auto;padding:22px clamp(16px,4vw,48px) 90px}
 .card:hover,.card:focus-visible{transform:translateY(-4px);box-shadow:var(--sh);border-color:var(--hover-border)}
 .card:focus-visible{box-shadow:0 0 0 2px var(--ac)}
 .ph{position:relative;aspect-ratio:3/4;background:var(--imgbg);overflow:hidden}
-.ph img{width:100%;height:100%;object-fit:contain;display:block;transition:opacity .18s}
+.ph img{width:100%;height:100%;object-fit:contain;display:block}
+/* 卡片图片渐显：加载完成前透明，避免硬切 */
+.card img{opacity:0;transition:opacity .32s ease}
+.card img.ld{opacity:1}
 .badge{position:absolute;top:10px;left:10px;display:flex;gap:6px}
 .badge span{background:var(--badge-bg);color:#fff;font-size:11px;padding:3px 8px;border-radius:99px;
   backdrop-filter:blur(4px);font-variant-numeric:tabular-nums}
@@ -182,6 +185,11 @@ main{max-width:1600px;margin:0 auto;padding:22px clamp(16px,4vw,48px) 90px}
 .strip button.on{outline:2px solid var(--ac);outline-offset:1px}
 .strip button.on span{background:var(--ac);color:var(--on-ac);font-weight:700}
 .empty{grid-column:1/-1;padding:90px 0;text-align:center;color:var(--tx3);font-size:14px;line-height:1.9}
+/* 分页：每页 60 组（360 图）/ 120 张单图 */
+.loadmore{display:block;margin:34px auto 0;height:46px;padding:0 30px;border:1px solid var(--line2);
+  border-radius:12px;background:var(--panel);color:var(--tx2);font-size:13.5px;cursor:pointer;transition:.15s}
+.loadmore:hover{border-color:var(--ac);color:var(--ac)}
+.loadmore[hidden]{display:none}
 .empty b{display:block;color:var(--tx2);font-size:15px;margin-bottom:6px}
 
 /* ── modal ── */
@@ -307,7 +315,7 @@ footer a:hover{color:var(--ac)}
   </div>
 </div>
 
-<main><div class="grid" id="grid"></div></main>
+<main><div class="grid" id="grid"></div><button class="loadmore" id="more" hidden></button></main>
 
 <footer id="foot"></footer>
 
@@ -345,7 +353,9 @@ const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'
 
 let LANG  = document.documentElement.dataset.lang  || 'zh';
 let THEME = document.documentElement.dataset.theme || 'dark';
-const S = {series:null, cat:null, ang:null, sort:'series', view:'pose', q:''};
+const PAGE_POSE = 60;    // 每组卡片含 6 张图，60 组 = 360 请求
+const PAGE_IMG  = 120;   // 单图视图每卡 1 张
+const S = {series:null, cat:null, ang:null, sort:'series', view:'pose', q:'', n:PAGE_POSE};
 
 /* ══ 语言工具 ══ */
 const t = k => (UI[LANG] && UI[LANG][k]) || (UI.ja[k] || k);
@@ -483,8 +493,10 @@ function badge(){
 }
 
 /* ══ 渲染 ══ */
-const grid=$('#grid'), countEl=$('#count');
+const grid=$('#grid'), countEl=$('#count'), moreEl=$('#more');
 let VIEWLIST=[];
+
+function pageSize(){ return S.view==='pose' ? PAGE_POSE : PAGE_IMG; }
 
 function draw(){
   const ORDERED = POSES.slice().sort(SORTERS[S.sort] || SORTERS.series);
@@ -494,18 +506,45 @@ function draw(){
     VIEWLIST = ps.map(p=>({p, d:(S.ang && p.v.find(v=>v.a===S.ang)) || p.v[0]}));
     const imgN = ps.reduce((a,p)=>a+(S.ang?p.v.filter(v=>v.a===S.ang).length:p.v.length),0);
     countEl.innerHTML = t('countPose').replace('{n}',ps.length).replace('{m}',imgN);
-    grid.innerHTML = VIEWLIST.map(({p,d},i)=>cardPose(p,d,i)).join('');
   } else {
     const ds = ORDERED.flatMap(p=>p.v.map(v=>({p,v}))).filter(o=>hitImg({s:o.p.s,c:o.p.c,p:o.p.p,n:o.p.n,z:o.p.z,a:o.v.a}));
     VIEWLIST = ds.map(o=>({p:o.p, d:o.v}));
     countEl.innerHTML = t('countImg').replace('{n}',ds.length);
-    grid.innerHTML = ds.map((o,i)=>cardImg(o.p,o.v,i)).join('');
   }
 
   if(!VIEWLIST.length){
     grid.innerHTML = '<div class="empty"><b>'+esc(t('emptyTitle'))+'</b>'+esc(t('emptyDesc'))+'</div>';
+    moreEl.hidden = true;
+    badge(); return;
   }
-  badge();
+
+  // 筛选/排序/视图变化都回到第一页
+  S.n = pageSize();
+  grid.innerHTML = VIEWLIST.slice(0, S.n).map(renderCard).join('');
+  sweepLoaded(); syncMore(); badge();
+}
+
+function renderCard({p,d}, i){
+  return S.view==='pose' ? cardPose(p,d,i) : cardImg(p,d,i);
+}
+
+function addMore(){
+  if(S.n >= VIEWLIST.length) return;
+  const from = S.n;
+  S.n = Math.min(S.n + pageSize(), VIEWLIST.length);
+  grid.insertAdjacentHTML('beforeend', VIEWLIST.slice(from, S.n).map((o,k)=>renderCard(o, from+k)).join(''));
+  sweepLoaded(); syncMore();
+}
+
+// 已在缓存中的图片不会触发 load，直接补渐显类
+function sweepLoaded(){
+  grid.querySelectorAll('img').forEach(im=>{ if(im.complete) im.classList.add('ld'); });
+}
+
+function syncMore(){
+  const rest = VIEWLIST.length - S.n;
+  moreEl.hidden = rest <= 0;
+  moreEl.textContent = rest > 0 ? ('加载更多（剩余 ' + rest + ' 组）') : '';
 }
 
 function cardPose(p, d, i){
@@ -514,7 +553,7 @@ function cardPose(p, d, i){
       '<img loading="lazy" decoding="async" src="'+esc(v.t)+'" alt="'+esc(nA(v.a))+'"><span>'+esc(nA(v.a))+'</span>'+
     '</button>').join('');
   return '<article class="card" tabindex="0" data-i="'+i+'">'+
-    '<div class="ph"><img loading="lazy" decoding="async" src="'+esc(d.t)+'" alt="'+esc(nN(p))+'">'+
+    '<div class="ph"><img'+(i<12?' fetchpriority="high"':' loading="lazy"')+' decoding="async" src="'+esc(d.t)+'" alt="'+esc(nN(p))+'">'+
       '<div class="badge"><span>'+esc(p.p)+'</span></div></div>'+
     '<div class="meta"><h3>'+esc(nN(p))+'</h3>'+
       '<div class="id">'+esc(nS(p.s))+' · '+esc(p.p)+'</div>'+
@@ -524,7 +563,7 @@ function cardPose(p, d, i){
 
 function cardImg(p, v, i){
   return '<article class="card" tabindex="0" data-i="'+i+'">'+
-    '<div class="ph"><img loading="lazy" decoding="async" src="'+esc(v.t)+'" alt="'+esc(nN(p))+'">'+
+    '<div class="ph"><img'+(i<12?' fetchpriority="high"':' loading="lazy"')+' decoding="async" src="'+esc(v.t)+'" alt="'+esc(nN(p))+'">'+
       '<div class="badge"><span class="alt">'+esc(nA(v.a))+'</span></div></div>'+
     '<div class="meta"><h3>'+esc(nN(p))+'</h3>'+
       '<div class="id">'+esc(p.p)+' · '+esc(nA(v.a))+'</div>'+
@@ -539,6 +578,12 @@ grid.addEventListener('mouseover', e=>{
   c.querySelector('.ph img').src=v.t;
   c.querySelectorAll('.strip button').forEach(x=>x.classList.toggle('on', x===b));
 });
+moreEl.onclick = addMore;
+if('IntersectionObserver' in window){
+  new IntersectionObserver(es=>{ if(es.some(e=>e.isIntersecting)) addMore(); }, {rootMargin:'800px'}).observe(moreEl);
+}
+grid.addEventListener('load', e=>{ if(e.target.tagName==='IMG') e.target.classList.add('ld'); }, true);
+grid.addEventListener('error', e=>{ if(e.target.tagName==='IMG') e.target.classList.add('ld'); }, true);
 grid.addEventListener('click', e=>{
   const c=e.target.closest('.card'); if(!c) return;
   const it=VIEWLIST[+c.dataset.i]; if(!it) return;

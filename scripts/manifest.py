@@ -15,8 +15,9 @@ for d in D:
     cat = safe(d["分類"])
     pid = safe(d["ポーズ番号"])
     ang = safe(d["アングル"])
-    rel_thumb = os.path.join("thumbs", series, cat, pid, ang + ".jpg")
-    rel_full = os.path.join("img", series, cat, pid, ang + ".png")
+    # 固定用正斜杠，避免在 Windows 上生成反斜杠路径（Linux 上无法使用）
+    rel_thumb = "/".join(["thumbs", series, cat, pid, ang + ".jpg"])
+    rel_full = "/".join(["img", series, cat, pid, ang + ".png"])
     rows.append({
         "id": d["id"], "系列": d["系統"], "分類": d["分類"], "编号": d["ポーズ番号"],
         "姿势名": d["ポーズ名"], "视角": d["アングル"],

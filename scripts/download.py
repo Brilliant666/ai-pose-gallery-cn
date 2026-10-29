@@ -70,3 +70,8 @@ if failed:
     json.dump(failed, open(os.path.join(root, "failed_%s.json" % tier), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 else:
     print("无失败")
+
+
+# [deploy-patch] 有失败条目时返回非零退出码，避免自动化流程误判成功
+if failed:
+    sys.exit(1)
