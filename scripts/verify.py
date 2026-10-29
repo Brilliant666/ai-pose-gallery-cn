@@ -72,3 +72,10 @@ for r in rows:
 dirs = set(os.path.dirname(r["thumb_path"]) for r in rows)
 print("姿势目录数:", len(dirs))
 print("系列目录数:", len(set(d.split(os.sep)[1] for d in dirs)))
+
+total_ok = sum(report[k]["ok"] for k in report)
+if total_ok == 0:
+    print("提示：所有文件都缺失，说明还没下载素材。请先运行：")
+    print("  python scripts/download.py thumb 16    # 缩略图，约 22 MB")
+    print("  python scripts/download.py full 14     # 原图，约 638 MB")
+    print("下载完成后重新运行本脚本即可校验。")
