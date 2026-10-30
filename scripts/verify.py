@@ -71,7 +71,7 @@ for r in rows:
     c[os.path.dirname(r["thumb_path"])] = c[os.path.dirname(r["thumb_path"])]
 dirs = set(os.path.dirname(r["thumb_path"]) for r in rows)
 print("姿势目录数:", len(dirs))
-print("系列目录数:", len(set(d.split(os.sep)[1] for d in dirs)))
+print("系列目录数:", len(set(d.replace("\\", "/").split("/")[1] for d in dirs)))
 
 total_ok = sum(report[k]["ok"] for k in report)
 if total_ok == 0:
