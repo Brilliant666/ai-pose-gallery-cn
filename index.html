@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN" data-theme="dark" data-lang="zh">
+<html lang="zh-CN" data-theme="light" data-lang="zh">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -307,8 +307,8 @@ footer a:hover{color:var(--ac)}
           </button>
         </div>
         <div class="switch" id="langSw" role="group" data-i18n-aria="langAria">
-          <button data-l="ja">日本語</button>
           <button data-l="zh">中文</button>
+          <button data-l="ja">日本語</button>
         </div>
       </div>
     </div>
@@ -352,7 +352,7 @@ const $ = s => document.querySelector(s);
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 let LANG  = document.documentElement.dataset.lang  || 'zh';
-let THEME = document.documentElement.dataset.theme || 'dark';
+let THEME = document.documentElement.dataset.theme || 'light';
 const PAGE_POSE = 60;    // 每组卡片含 6 张图，60 组 = 360 请求
 const PAGE_IMG  = 120;   // 单图视图每卡 1 张
 const S = {series:null, cat:null, ang:null, sort:'series', view:'pose', q:'', n:PAGE_POSE};
